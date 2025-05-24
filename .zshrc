@@ -3,22 +3,44 @@
 
 # PATH
 typeset -U PATH path
-export PATH="$HOME/.nvm/versions/node/v*/bin:/opt/homebrew/bin:/opt/homebrew/opt/php@8.3/bin:/opt/homebrew/opt/php@8.3/sbin:/opt/homebrew/opt/php@7.2/bin:/opt/homebrew/opt/php@7.2/sbin:/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:/usr/local/git/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:$HOME/.go/bin:/usr/local/m-cli:$HOME/.yarn/bin:$HOME/.cargo/bin:$HOME/.composer/vendor/bin:$HOME/.rvm/bin:$HOME/roc_nightly-macos_apple_silicon-2025-03-22-c47a8e9cdac"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="$HOME/.nvm/versions/node/v*/bin:$PATH"
+export PATH="/opt/homebrew/opt/php@8.3/bin:/opt/homebrew/opt/php@8.3/sbin:$PATH"
+export PATH="/opt/homebrew/opt/php@7.2/bin:/opt/homebrew/opt/php@7.2/sbin:$PATH"
+export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
+export PATH="/usr/local/git/bin:$HOME/.local/bin:$HOME/.go/bin:/usr/local/go/bin:$HOME/.cargo/bin:$HOME/.composer/vendor/bin:$HOME/.rvm/bin:$HOME/.yarn/bin:$HOME/roc_nightly-macos_apple_silicon-2025-03-22-c47a8e9cdac:$PATH"
 
-# Lazy-load nvm
+# NVM
+# NVM (immediate load)
 export NVM_DIR="$HOME/.nvm"
-nvm() {
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-    nvm "$@"
-}
-node() { [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"; node "$@"; }
-npm() { [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"; npm "$@"; }
-npx() { [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"; npx "$@"; }
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
 # Go
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/.go
+export GOROOT="/usr/local/go"
+export GOPATH="$HOME/.go"
+
+# PNPM
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+
+# Java & Android
+export JAVA_HOME=$(/usr/libexec/java_home)
+export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+
+# Terminal Colors
+export TERM="xterm-256color"
+[ -n "$TMUX" ] && export TERM="screen-256color"
+
+# LDFLAGS / CPPFLAGS for PHP
+export LDFLAGS="-L/opt/homebrew/opt/php@8.3/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/php@8.3/include"
+
+# GVM (Go Version Manager)
+gvm() {
+  [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+  gvm "$@"
+}
 
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -34,8 +56,8 @@ autoload -Uz compinit
 compinit -u
 
 # Lazy-load plugins with zsh-defer
-zsh-defer source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-zsh-defer . /Users/rashed/.opam/opam-init/init.zsh > /dev/null 2> /dev/null
+zsh-defer source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+zsh-defer . "$HOME/.opam/opam-init/init.zsh" > /dev/null 2>&1
 
 # Aliases
 alias godir="cd .go/src/gowork"
@@ -56,28 +78,34 @@ alias pg_stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.
 alias php7="valet use php@7.4"
 alias php8="valet use php@8.0"
 alias php8.1="valet use php@8.1"
-alias 7.2='{ brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.2 --force --overwrite; } &> /dev/null && php -v'
-alias 7.3='{ brew unlink php@7.2; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.3 --force --overwrite; } &> /dev/null && php -v'
-alias 7.4='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.4 --force --overwrite; } &> /dev/null && php -v'
-alias 8.0='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.1; brew link php@8.0 --force --overwrite; } &> /dev/null && php -v'
-alias 8.1='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew link php@8.1 --force --overwrite; } &> /dev/null && php -v'
+
+# PHP switchers
+alias 7.2='{ brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.2 --force --overwrite; } &>/dev/null && php -v'
+alias 7.3='{ brew unlink php@7.2; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.3 --force --overwrite; } &>/dev/null && php -v'
+alias 7.4='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.4 --force --overwrite; } &>/dev/null && php -v'
+alias 8.0='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.1; brew link php@8.0 --force --overwrite; } &>/dev/null && php -v'
+alias 8.1='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew link php@8.1 --force --overwrite; } &>/dev/null && php -v'
+
+# Node legacy flag
 alias legacy="export NODE_OPTIONS=--openssl-legacy-provider"
+
+# Dock
 alias dockhide='defaults write com.apple.dock autohide -bool true && killall Dock'
 alias dockshow='defaults write com.apple.dock autohide -bool false && killall Dock'
 alias docktoggle='current=$(defaults read com.apple.dock autohide); if [ "$current" -eq 1 ]; then dockshow; else dockhide; fi'
 
-# Starship
+# Starship prompt
 eval "$(starship init zsh)"
 
 # FZF
 source <(fzf --zsh)
 bindkey '^T' fzf-file-widget
 
-# Spectrum (color functions)
+# Spectrum colors
 typeset -AHg FX FG BG
 for color in {000..255}; do
-    FG[$color]="%{[38;5;${color}m%}"
-    BG[$color]="%{[48;5;${color}m%}"
+  FG[$color]="%{[38;5;${color}m%}"
+  BG[$color]="%{[48;5;${color}m%}"
 done
 ZSH_SPECTRUM_TEXT=${ZSH_SPECTRUM_TEXT:-Arma virumque cano Troiae qui primus ab oris}
 spectrum_ls() {
@@ -91,24 +119,6 @@ spectrum_bls() {
   done
 }
 
-# Environment variables
-export JAVA_HOME=$(/usr/libexec/java_home)
-export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export TERM=xterm-256color
-[ -n "$TMUX" ] && export TERM=screen-256color
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-export LDFLAGS="-L/opt/homebrew/opt/php@8.3/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/php@8.3/include"
-
-# GVM
-gvm() {
-    [[ -s "/Users/rashed/.gvm/scripts/gvm" ]] && source "/Users/rashed/.gvm/scripts/gvm"
-    gvm "$@"
-}
-
 # Profiling (optional, remove after testing)
 # zprof
+
