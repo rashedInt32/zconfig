@@ -75,15 +75,9 @@ alias cover="code $HOME/Documents/resume/cover.txt"
 alias nconfig="nvim $HOME/.config/nvim"
 alias pg_start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
 alias pg_stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
-alias php7="valet use php@7.4"
-alias php8="valet use php@8.0"
 alias php8.1="valet use php@8.1"
 
 # PHP switchers
-alias 7.2='{ brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.2 --force --overwrite; } &>/dev/null && php -v'
-alias 7.3='{ brew unlink php@7.2; brew unlink php@7.4; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.3 --force --overwrite; } &>/dev/null && php -v'
-alias 7.4='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@8.0; brew unlink php@8.1; brew link php@7.4 --force --overwrite; } &>/dev/null && php -v'
-alias 8.0='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.1; brew link php@8.0 --force --overwrite; } &>/dev/null && php -v'
 alias 8.1='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew link php@8.1 --force --overwrite; } &>/dev/null && php -v'
 
 # Node legacy flag
@@ -96,6 +90,10 @@ alias docktoggle='current=$(defaults read com.apple.dock autohide); if [ "$curre
 
 # Starship prompt
 eval "$(starship init zsh)"
+
+#tmux session
+alias tmux="$HOME/.config/.local/scripts/tmux-sessionizer.sh"
+
 
 # FZF
 source <(fzf --zsh)
