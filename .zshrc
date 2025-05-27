@@ -92,7 +92,8 @@ alias docktoggle='current=$(defaults read com.apple.dock autohide); if [ "$curre
 eval "$(starship init zsh)"
 
 #tmux session
-alias tmux="$HOME/.config/.local/scripts/tmux-sessionizer.sh"
+alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer.sh"
+alias conf="nvim $HOME/.config/"
 
 
 # FZF
