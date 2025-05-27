@@ -5,6 +5,7 @@
 typeset -U PATH path
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export PATH="$HOME/.nvm/versions/node/v*/bin:$PATH"
+export PATH="$HOME/.config/.local/scripts:$PATH"
 export PATH="/opt/homebrew/opt/php@8.3/bin:/opt/homebrew/opt/php@8.3/sbin:$PATH"
 export PATH="/opt/homebrew/opt/php@7.2/bin:/opt/homebrew/opt/php@7.2/sbin:$PATH"
 export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
@@ -92,7 +93,7 @@ alias docktoggle='current=$(defaults read com.apple.dock autohide); if [ "$curre
 eval "$(starship init zsh)"
 
 #tmux session
-alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer.sh"
+alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
 alias conf="nvim $HOME/.config/"
 
 
