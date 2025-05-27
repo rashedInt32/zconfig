@@ -69,14 +69,19 @@ alias gst="git status | lolcat"
 alias pull="git pull | lolcat"
 alias gcm="git commit -am "
 alias gaa="git add ."
-alias zconfig="nvim ~/.zshrc"
-alias gconfig="nvim $HOME/.config/ghostty/config"
 alias cldir="find . -name '*.DS_Store' -type f -delete"
 alias cover="code $HOME/Documents/resume/cover.txt"
-alias nconfig="nvim $HOME/.config/nvim"
 alias pg_start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
 alias pg_stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
 alias php8.1="valet use php@8.1"
+
+
+alias nconfig="cd $HOME/.config/nvim; nvim ."
+alias zconfig="nvim ~/.zshrc"
+alias gconfig="cd $HOME/.config/ghostty/config; nvim ."
+#tmux session
+alias conf="cd $HOME/.config; nvim ."
+alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
 
 # PHP switchers
 alias 8.1='{ brew unlink php@7.2; brew unlink php@7.3; brew unlink php@7.4; brew unlink php@8.0; brew link php@8.1 --force --overwrite; } &>/dev/null && php -v'
@@ -92,9 +97,6 @@ alias docktoggle='current=$(defaults read com.apple.dock autohide); if [ "$curre
 # Starship prompt
 eval "$(starship init zsh)"
 
-#tmux session
-alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
-alias conf="nvim $HOME/.config/"
 
 
 # FZF
