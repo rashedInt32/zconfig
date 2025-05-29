@@ -1,5 +1,5 @@
 # Profiling (optional, remove after testing)
-# zmodload zsh/zprof
+#zmodload zsh/zprof
 
 # PATH
 typeset -U PATH path
@@ -11,11 +11,31 @@ export PATH="/opt/homebrew/opt/php@7.2/bin:/opt/homebrew/opt/php@7.2/sbin:$PATH"
 export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
 export PATH="/usr/local/git/bin:$HOME/.local/bin:$HOME/.go/bin:/usr/local/go/bin:$HOME/.cargo/bin:$HOME/.composer/vendor/bin:$HOME/.rvm/bin:$HOME/.yarn/bin:$HOME/roc_nightly-macos_apple_silicon-2025-03-22-c47a8e9cdac:$PATH"
 
+
+
+
+
+if command -v tmux >/dev/null 2>&1; then
+  if [ -z "$TMUX" ]; then
+    # Try common Ghostty environment variables
+    if [ "$TERM_PROGRAM" = "Ghostty" ] || [ -n "$GHOSTTY" ] || [[ "$TERM" == *"xterm"* ]]; then
+      tmux attach-session -t main || tmux new-session -s main
+      exit
+    fi
+  fi
+fi
+
+
+
+
 # NVM
 # NVM (immediate load)
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+
+
 
 # Go
 export GOROOT="/usr/local/go"
@@ -46,7 +66,7 @@ gvm() {
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
 zstyle ':omz:update' mode disabled
-plugins=(git zsh-autosuggestions zsh-vi-mode zsh-defer)
+plugins=(git zsh-autosuggestions zsh-defer)
 source $ZSH/oh-my-zsh.sh
 
 # Completion
@@ -57,8 +77,10 @@ autoload -Uz compinit
 compinit -u
 
 # Lazy-load plugins with zsh-defer
-zsh-defer source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 zsh-defer . "$HOME/.opam/opam-init/init.zsh" > /dev/null 2>&1
+zsh-defer source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+bindkey -r '^L'
+bindkey '^L' autosuggest-accept
 
 # Aliases
 alias godir="cd .go/src/gowork"
@@ -78,6 +100,7 @@ alias php8.1="valet use php@8.1"
 
 alias nconfig="cd $HOME/.config/nvim; nvim ."
 alias zconfig="nvim ~/.zshrc"
+alias copyz="cp -r ~/.zshrc ~/.config/zconfig"
 alias gconfig="cd $HOME/.config/ghostty/config; nvim ."
 #tmux session
 alias conf="cd $HOME/.config; nvim ."
@@ -103,6 +126,8 @@ eval "$(starship init zsh)"
 source <(fzf --zsh)
 bindkey '^T' fzf-file-widget
 
+
+
 # Spectrum colors
 typeset -AHg FX FG BG
 for color in {000..255}; do
@@ -122,5 +147,4 @@ spectrum_bls() {
 }
 
 # Profiling (optional, remove after testing)
-# zprof
-
+#zprof
