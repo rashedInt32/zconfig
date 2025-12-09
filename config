@@ -1,0 +1,136 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   /Users/rashed/Library/Application Support/com.mitchellh.ghostty/config
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options. Users should only need to set
+# options that they want to change from the default.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+# Config syntax crash course
+# ==========================
+# # The config file consists of simple key-value pairs,
+# # separated by equals signs.
+
+# window-padding-x = 2
+#
+# # Spacing around the equals sign does not matter.
+# # All of these are identical:
+# key=value
+# key= value
+# key =value
+# key = value
+#
+# # Any line beginning with a # is a comment. It's not possible to put
+# # a comment after a config option, since it would be interpreted as a
+# # part of the value. For example, this will have a value of "#123abc":
+# background = #123abc
+#
+# # Empty values are used to reset config keys to default.
+# key =
+#
+# # Some config options have unique syntaxes for their value,
+# # which is explained in the docs for that config option.
+# # Just for example:
+# resize-overlay-duration = 4s 200ms
+
+
+
+font-size=21
+font-thicken=false
+alpha-blending = linear-corrected
+font-family = "JetBrains Mono Nerd Font"
+#font-family = "IosevkaTerm Nerd Font"
+#font-style-italic="JetBrains Mono Nerd Font"
+#font-family = 0xProto
+#font-style-italic="IosevkaTerm Nerd Font"
+
+title=" "
+gtk-titlebar = false
+window-width = 115
+window-height = 60
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = true
+window-step-resize = true
+
+
+
+# Look and Feel
+adjust-cursor-thickness        = 3
+adjust-underline-position      = 3
+bold-is-bright                 = true
+cursor-invert-fg-bg            = true
+cursor-opacity                 = 0.8
+link-url                       = true
+mouse-hide-while-typing        = true
+window-vsync                   = true
+#theme                          = everforest-light
+#theme                          = noctis-azureus
+theme                          = night-owl
+background-opacity             = 1.0
+
+
+
+clipboard-paste-protection     = true
+clipboard-trim-trailing-spaces = true
+copy-on-select                 = true
+macos-auto-secure-input        = true
+macos-secure-input-indication  = true
+quit-after-last-window-closed  = true
+scrollback-limit               = 4200
+shell-integration              = zsh
+confirm-close-surface          = false
+
+
+
+
+shell-integration-features     = cursor,sudo,title
+
+
+
+# Key bindings
+keybind                        = super+h=goto_split:left
+keybind                        = ctrl+j=goto_split:bottom
+keybind                        = ctrl+k=goto_split:top
+keybind                        = super+l=goto_split:right
+keybind                        = ctrl+shift+h=new_split:left
+keybind                        = ctrl+shift+j=new_split:down
+keybind                        = ctrl+shift+k=new_split:up
+keybind                        = ctrl+shift+l=new_split:right
+keybind                        = super+shift+enter=new_split:auto
+keybind                        = super+shift+i=inspector:toggle
+keybind                        = super+shift+r=reload_config
+keybind                        = super+t=new_tab
+
+# Performance & Rendering
+grapheme-width-method          = legacy
+custom-shader-animation        = false
+
+# Enhanced Terminal Features
+cursor-click-to-move           = true
+scroll-to-bottom               = keystroke
+selection-clear-on-copy        = true
+link-previews                  = true
+
+# Better UX
+window-inherit-working-directory = true
+window-inherit-font-size       = true
+resize-overlay                 = after-first
+focus-follows-mouse            = true
+
+# Font size controls
+keybind                        = super+equal=increase_font_size:1
+keybind                        = super+minus=decrease_font_size:1
+keybind                        = super+0=reset_font_size
+keybind                        = super+comma=open_config
+keybind                        = super+shift+c=copy_to_clipboard
+keybind                        = super+shift+v=paste_from_clipboard
