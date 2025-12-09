@@ -12,7 +12,7 @@ export PATH="/usr/local/opt/icu4c/bin:/usr/local/opt/icu4c/sbin:$PATH"
 export PATH="/usr/local/git/bin:$HOME/.local/bin:$HOME/.go/bin:/usr/local/go/bin:$HOME/.cargo/bin:$HOME/.composer/vendor/bin:$HOME/.rvm/bin:$HOME/.yarn/bin:$HOME/roc_nightly-macos_apple_silicon-2025-03-22-c47a8e9cdac:$PATH"
 
 
-
+export EDITOR="nvim"
 
 
 if command -v tmux >/dev/null 2>&1; then
@@ -51,7 +51,7 @@ export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 
 # Terminal Colors
 export TERM="xterm-256color"
-[ -n "$TMUX" ] && export TERM="screen-256color"
+[ -n "$TMUX" ] && export TERM="tmux-256color"
 
 # LDFLAGS / CPPFLAGS for PHP
 export LDFLAGS="-L/opt/homebrew/opt/php@8.3/lib"
@@ -128,6 +128,7 @@ bindkey '^T' fzf-file-widget
 
 
 
+
 # Spectrum colors
 typeset -AHg FX FG BG
 for color in {000..255}; do
@@ -148,3 +149,20 @@ spectrum_bls() {
 
 # Profiling (optional, remove after testing)
 #zprof
+
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/rashed/Library/Application Support/Herd/config/php/84/"
+
+
+# Herd injected PHP binary.
+export PATH="/Users/rashed/Library/Application Support/Herd/bin/":$PATH
+
+source ~/.safe-chain/scripts/init-posix.sh # Safe-chain Zsh initialization script
+
+# bun completions
+[ -s "/Users/rashed/.bun/_bun" ] && source "/Users/rashed/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
