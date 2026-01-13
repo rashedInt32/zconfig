@@ -228,3 +228,11 @@ source ~/.safe-chain/scripts/init-posix.sh
 # =====================================================
 # zprof
 
+
+
+# Herd injected PHP binary.
+export PATH="/Users/rashed/Library/Application Support/Herd/bin/":$PATH
+
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/rashed/Library/Application Support/Herd/config/php/84/"
