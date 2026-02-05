@@ -149,6 +149,19 @@ eval "$(starship init zsh)"
 source <(fzf --zsh)
 bindkey '^T' fzf-file-widget
 
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+fg="#CBE0F0"
+bg="#011628"
+bg_highlight="#143652"
+purple="#B388FF"
+blue="#06BCE4"
+cyan="#2CF9ED"
+
+export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
+
 _fzf_compgen_dir() {
   fd --type=d --hidden --exclude .git . "$1"
 }
@@ -211,7 +224,7 @@ alias conf="cd $HOME/.config && nvim ."
 alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
 
 alias cldir="find . -name '*.DS_Store' -type f -delete"
-alias cover="code $HOME/Documents/resume/cover.txt"
+alias cover="zed $HOME/Documents/resume/cover.txt"
 
 alias pg_start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
 alias pg_stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
