@@ -2,7 +2,7 @@
 # =====================================================
 # 1. PROFILING / DEBUG (optional)
 # =====================================================
-# zmodload zsh/zprof
+zmodload zsh/zprof
 
 
 # =====================================================
@@ -40,33 +40,9 @@ fi
 # 4. LANGUAGE RUNTIMES / SDKs
 # =====================================================
 
-# Node (NVM) - Lazy loaded for performance
+# Node (NVM)
 export NVM_DIR="$HOME/.nvm"
-nvm() {
-  unset -f nvm node npm npx yarn 2>/dev/null
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  nvm "$@"
-}
-node() {
-  unset -f nvm node npm npx yarn 2>/dev/null
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  node "$@"
-}
-npm() {
-  unset -f nvm node npm npx yarn 2>/dev/null
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  npm "$@"
-}
-npx() {
-  unset -f nvm node npm npx yarn 2>/dev/null
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  npx "$@"
-}
-yarn() {
-  unset -f nvm node npm npx yarn 2>/dev/null
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  yarn "$@"
-}
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 
 # Go
 export GOROOT="/usr/local/go"
@@ -136,11 +112,11 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 
 autoload -Uz compinit
-compinit -C -u
+compinit -u
 
-# Carapace - Deferred for faster startup
+# Carapace
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
-zsh-defer source <(carapace _carapace)
+source <(carapace _carapace)
 
 
 # =====================================================
@@ -225,6 +201,7 @@ export BAT_THEME=tokyonight
 
 alias ls="eza --icons=always --oneline"
 
+eval $(thefuck --alias)
 eval $(thefuck --alias fk)
 
 
@@ -263,27 +240,23 @@ alias docktoggle='current=$(defaults read com.apple.dock autohide); [[ $current 
 
 
 # =====================================================
-# 12. VISUAL UTILITIES (SPECTRUM) - Lazy loaded
+# 12. VISUAL UTILITIES (SPECTRUM)
 # =====================================================
+typeset -AHg FX FG BG
+for color in {000..255}; do
+  FG[$color]="%{\e[38;5;${color}m%}"
+  BG[$color]="%{\e[48;5;${color}m%}"
+done
+
 ZSH_SPECTRUM_TEXT=${ZSH_SPECTRUM_TEXT:-Arma virumque cano Troiae qui primus ab oris}
 
-_spectrum_init() {
-  typeset -AHg FX FG BG
-  for color in {000..255}; do
-    FG[$color]="%{\e[38;5;${color}m%}"
-    BG[$color]="%{\e[48;5;${color}m%}"
-  done
-}
-
 spectrum_ls() {
-  _spectrum_init
   for code in {000..255}; do
     print -P -- "$code: %{$FG[$code]%}$ZSH_SPECTRUM_TEXT%{$reset_color%}"
   done
 }
 
 spectrum_bls() {
-  _spectrum_init
   for code in {000..255}; do
     print -P -- "$code: %{$BG[$code]%}$ZSH_SPECTRUM_TEXT%{$reset_color%}"
   done
@@ -299,13 +272,4 @@ source ~/.safe-chain/scripts/init-posix.sh
 # =====================================================
 # 14. PROFILING OUTPUT (optional)
 # =====================================================
-# zprof
-
-
-
-# Herd injected PHP binary.
-export PATH="/Users/rashed/Library/Application Support/Herd/bin/":$PATH
-
-
-# Herd injected PHP 8.4 configuration.
-export HERD_PHP_84_INI_SCAN_DIR="/Users/rashed/Library/Application Support/Herd/config/php/84/"
+zprof
