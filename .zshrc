@@ -2,7 +2,7 @@
 # =====================================================
 # 1. PROFILING / DEBUG (optional)
 # =====================================================
-zmodload zsh/zprof
+#zmodload zsh/zprof
 
 
 # =====================================================
@@ -40,9 +40,13 @@ fi
 # 4. LANGUAGE RUNTIMES / SDKs
 # =====================================================
 
-# Node (NVM)
+# Node (NVM) - lazy loaded for faster startup
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+nvm() {
+  unset -f nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+  nvm "$@"
+}
 
 # Go
 export GOROOT="/usr/local/go"
@@ -111,8 +115,8 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 
-autoload -Uz compinit
-compinit -u
+# compinit is already called by oh-my-zsh.sh, skip to avoid duplicate
+# autoload -Uz compinit && compinit -u
 
 # Carapace
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
@@ -201,8 +205,7 @@ export BAT_THEME=tokyonight
 
 alias ls="eza --icons=always --oneline"
 
-eval $(thefuck --alias)
-eval $(thefuck --alias fk)
+eval "$(thefuck --alias fk)"
 
 
 # =====================================================
@@ -272,4 +275,4 @@ source ~/.safe-chain/scripts/init-posix.sh
 # =====================================================
 # 14. PROFILING OUTPUT (optional)
 # =====================================================
-zprof
+#zprof
