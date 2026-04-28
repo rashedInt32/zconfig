@@ -226,6 +226,25 @@ alias gconfig="cd $HOME/.config/ghostty/config && nvim ."
 alias conf="cd $HOME/.config && nvim ."
 alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
 
+snipcopy() {
+  local src="$HOME/.config/nvim/snippets/snippets/typescript.json"
+  local dst="$HOME/Documents/codes/packages/effect-snippets/snippets/effect.json"
+  local repo="$HOME/Documents/codes/packages/effect-snippets"
+
+  cp "$src" "$dst" || { echo "snipcopy: copy failed" >&2; return 1; }
+
+  (
+    cd "$repo" || return 1
+    if [ -z "$(git status --porcelain)" ]; then
+      echo "snipcopy: nothing changed"
+      return 0
+    fi
+    git add -A && \
+    git commit -m "sync snippets from nvim ($(date +%Y-%m-%d))" && \
+    git push
+  )
+}
+
 alias cldir="find . -name '*.DS_Store' -type f -delete"
 alias cover="zed $HOME/Documents/resume/cover.txt"
 
@@ -276,3 +295,17 @@ source ~/.safe-chain/scripts/init-posix.sh
 # 14. PROFILING OUTPUT (optional)
 # =====================================================
 #zprof
+
+
+# Herd injected PHP binary.
+export PATH="/Users/rashed/Library/Application Support/Herd/bin/":$PATH
+
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/rashed/Library/Application Support/Herd/config/php/84/"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/rashed/.lmstudio/bin"
+# End of LM Studio CLI section
+
+eval "$(tv init zsh)"
