@@ -98,13 +98,13 @@ plugins=(
   zsh-autosuggestions
   fast-syntax-highlighting
   zsh-defer
-  zsh-vi-mode
+  #zsh-vi-mode
 )
 
 source $ZSH/oh-my-zsh.sh
 
 # Enable vi-mode (IMPORTANT)
-zvm_init
+#zvm_init
 
 
 # =====================================================
