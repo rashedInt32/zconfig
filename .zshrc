@@ -104,7 +104,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # Enable vi-mode (IMPORTANT)
-#zvm_init
+
 
 
 # =====================================================
@@ -309,3 +309,15 @@ export PATH="$PATH:/Users/rashed/.lmstudio/bin"
 # End of LM Studio CLI section
 
 eval "$(tv init zsh)"
+
+# kp [port] — kill whatever listens on a port (default 3000). Handy in tmux.
+kp() {
+  local port="${1:-3000}"
+  local -a pids
+  pids=(${(f)"$(lsof -ti tcp:"$port")"})
+  if [ ${#pids} -gt 0 ]; then
+    kill -9 "${pids[@]}" && echo "✓ port $port freed"
+  else
+    echo "port $port already free"
+  fi
+}
