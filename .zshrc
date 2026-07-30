@@ -321,3 +321,19 @@ kp() {
     echo "port $port already free"
   fi
 }
+
+# hdDev [port] [extra next args...] — run the frontend workspace on a chosen port.
+# One codebase, many worktrees: everything wants 3000, so pick your own.
+#   hdDev                  → port 3000
+#   hdDev 3001             → port 3001
+#   hdDev 3002 -H 0.0.0.0  → extra args pass straight through to next
+# Override the workspace with: HD_DEV_FILTER=admin hdDev 3005
+hdDev() {
+  local port="${1:-3000}"
+  if [[ "$port" != <-> ]]; then
+    echo "hdDev: port must be a number (got '$port')" >&2
+    return 1
+  fi
+  (( $# )) && shift
+  pnpm --filter "${HD_DEV_FILTER:-frontend}" exec next dev --turbo --port "$port" "$@"
+}
