@@ -27,7 +27,8 @@ export TERM="xterm-256color"
 [ -n "$TMUX" ] && export TERM="tmux-256color"
 
 if command -v tmux >/dev/null 2>&1; then
-  if [ -z "$TMUX" ]; then
+  # NO_AUTO_TMUX=1 opts out of auto-attach (e.g. to run herdr in a bare shell)
+  if [ -z "$TMUX" ] && [ -z "$NO_AUTO_TMUX" ] && [ -t 0 ] && [ -t 1 ]; then
     if [ "$TERM_PROGRAM" = "Ghostty" ] || [ -n "$GHOSTTY" ] || [[ "$TERM" == *"xterm"* ]]; then
       tmux attach-session -t main || tmux new-session -s main
       exit
@@ -211,6 +212,11 @@ eval "$(thefuck --alias fk)"
 # =====================================================
 # 12. ALIASES
 # =====================================================
+# claude-hl (github.com/rashedInt32/claude-hl) wraps the real CLI in a PTY and
+# colours shell commands in its output. Args pass straight through. `command
+# claude` still runs the bare CLI.
+alias claude="claude-hl"
+
 alias gst="git status | lolcat"
 alias pull="git pull | lolcat"
 alias gcm="git commit -am "
@@ -225,6 +231,10 @@ alias copyz="cp -r ~/.zshrc ~/.config/zconfig"
 alias gconfig="cd $HOME/.config/ghostty/config && nvim ."
 alias conf="cd $HOME/.config && nvim ."
 alias ssn="$HOME/.config/.local/scripts/tmux-sessionizer"
+# Launch herdr (agent multiplexer) in its own tmux-free Ghostty window.
+# Output is silenced and the process is backgrounded+disowned (&!) so Ghostty's
+# logs don't leak into the launching pane and your prompt returns immediately.
+alias herd="/Applications/Ghostty.app/Contents/MacOS/ghostty -e herdr >/dev/null 2>&1 &!"
 
 snipcopy() {
   local src="$HOME/.config/nvim/snippets/snippets/typescript.json"
@@ -337,3 +347,5 @@ hdDev() {
   (( $# )) && shift
   pnpm --filter "${HD_DEV_FILTER:-frontend}" exec next dev --turbo --port "$port" "$@"
 }
+
+. "$HOME/.atuin/bin/env"
