@@ -215,7 +215,10 @@ eval "$(thefuck --alias fk)"
 # claude-hl (github.com/rashedInt32/claude-hl) wraps the real CLI in a PTY and
 # colours shell commands in its output. Args pass straight through. `command
 # claude` still runs the bare CLI.
-alias claude="claude-hl"
+# --allow-dangerously-skip-permissions ARMS bypass mode in the Shift+Tab cycle
+# without activating it: cycle into "bypass permissions" mid-investigation,
+# cycle back out when done. Remove the flag to hide the mode again.
+alias claude="claude-hl --allow-dangerously-skip-permissions"
 
 alias gst="git status | lolcat"
 alias pull="git pull | lolcat"
