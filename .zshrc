@@ -221,22 +221,14 @@ eval "$(thefuck --alias fk)"
 # 2026-10-12: inside tmux under Ghostty, tell Claude Code its terminal is
 # Ghostty. It sends Ghostty's progress bar (OSC 9;4) only when TERM_PROGRAM
 # is ghostty >= 1.2.0 (2.1.296), and wraps it for tmux on its own; needs
-# `allow-passthrough` in tmux.conf. Pictures too: Claude Code draws none in
-# tmux unless forced, and forced it writes kitty graphics codes tmux drops,
-# so claude-hl (painting off) wraps them for tmux's passthrough.
-# Outside tmux this is plain `command claude`: pictures work natively there.
-# One switch for both: glass's `screenshots` option (/config > Glass). Off,
-# glass draws no pictures anywhere and this skips claude-hl in tmux.
+# `allow-passthrough` in tmux.conf. Outside tmux this is plain `command claude`.
+# Pictures in tmux (claude-hl wrapping kitty graphics) were dropped 2026-10-12
+# with glass 0.9.0: a picture scrolled back up left an empty gap.
 unalias claude 2>/dev/null
 claude() {
-  local outer shots=true
+  local outer
   [[ -n $TMUX ]] && outer=$(tmux display -p '#{client_termtype}' 2>/dev/null)
-  # `!= false`, not `// true`: jq's `//` treats false as missing
-  [[ -n $outer ]] && shots=$(jq -r '.pluginConfigs["glass@glass"].options.screenshots != false' ~/.claude/settings.json 2>/dev/null || echo true)
-  if [[ $outer == ghostty\ * && $shots != false ]] && (( $+commands[claude-hl] )); then
-    CLAUDE_HL_PAINT=0 CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1 \
-      TERM_PROGRAM=ghostty TERM_PROGRAM_VERSION=${outer#ghostty } claude-hl --allow-dangerously-skip-permissions "$@"
-  elif [[ $outer == ghostty\ * ]]; then
+  if [[ $outer == ghostty\ * ]]; then
     TERM_PROGRAM=ghostty TERM_PROGRAM_VERSION=${outer#ghostty } command claude --allow-dangerously-skip-permissions "$@"
   else
     command claude --allow-dangerously-skip-permissions "$@"
