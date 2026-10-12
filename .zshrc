@@ -212,9 +212,7 @@ eval "$(thefuck --alias fk)"
 # =====================================================
 # 12. ALIASES
 # =====================================================
-# claude-hl (github.com/rashedInt32/claude-hl) wraps the real CLI in a PTY and
-# colours shell commands in its output. Args pass straight through. `command
-# claude` still runs the bare CLI.
+# `command claude` runs the bare CLI.
 # --allow-dangerously-skip-permissions ARMS bypass mode in the Shift+Tab cycle
 # without activating it: cycle into "bypass permissions" mid-investigation,
 # cycle back out when done. Remove the flag to hide the mode again.
@@ -222,8 +220,8 @@ eval "$(thefuck --alias fk)"
 # Ghostty. It sends Ghostty's progress bar (OSC 9;4) only when TERM_PROGRAM
 # is ghostty >= 1.2.0 (2.1.296), and wraps it for tmux on its own; needs
 # `allow-passthrough` in tmux.conf. Outside tmux this is plain `command claude`.
-# Pictures in tmux (claude-hl wrapping kitty graphics) were dropped 2026-10-12
-# with glass 0.9.0: a picture scrolled back up left an empty gap.
+# Pictures in tmux were dropped 2026-10-12 with glass 0.9.0: a picture
+# scrolled back up left an empty gap.
 unalias claude 2>/dev/null
 claude() {
   local outer
