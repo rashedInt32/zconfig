@@ -19,6 +19,25 @@ export PATH="$HOME/roc_nightly-macos_apple_silicon-2025-03-22-c47a8e9cdac:$PATH"
 
 export EDITOR="nvim"
 
+# Cache the init scripts that tools print, so startup doesn't spawn each tool.
+# A cache rebuilds when the tool's resolved path changes (brew upgrade), the
+# binary is newer than the cache, or the cache is a day old (carapace picks up
+# newly installed commands). Clear with: rm -rf ~/.cache/zsh-init
+_zinit_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh-init"
+cached_init() {
+  local name=$1; shift
+  local bin=${commands[$1]} file="$_zinit_cache/$name.zsh" stamp
+  local -a stale
+  [[ -n $bin ]] || return 0
+  [[ -s $file ]] && read -r stamp < $file
+  stale=( ${~file}(Nmh+23) )
+  if [[ $stamp != "# ${bin:A} $*" || $bin -nt $file || -n $stale ]]; then
+    mkdir -p $_zinit_cache
+    { print -r -- "# ${bin:A} $*"; "$@" } >| $file
+  fi
+  source $file
+}
+
 
 # =====================================================
 # 3. TERMINAL / TMUX AUTO-ATTACH
@@ -79,7 +98,6 @@ export PATH="$PNPM_HOME:$PATH"
 # Bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # GVM (lazy)
 gvm() {
@@ -121,7 +139,7 @@ zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 
 # Carapace
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
-source <(carapace _carapace)
+cached_init carapace carapace _carapace
 
 
 # =====================================================
@@ -148,10 +166,50 @@ bindkey -M viins '^I' expand-or-complete
 # =====================================================
 # 9. PROMPT & UI
 # =====================================================
-eval "$(starship init zsh)"
+cached_init starship starship init zsh
+
+# Narrow panes (loom and tmux splits) get the compact prompt: no user name,
+# no language versions, a truncated branch. Starship re-reads STARSHIP_CONFIG
+# on every redraw, so this runs before each prompt and on every resize.
+_starship_width() {
+  if (( COLUMNS < 100 )); then
+    export STARSHIP_CONFIG="$HOME/.config/starship-compact.toml"
+  else
+    unset STARSHIP_CONFIG
+  fi
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _starship_width
+# The width and config the prompt on screen was drawn with.
+_prompt_drawn() { _prompt_cols=$COLUMNS; _prompt_cfg=${STARSHIP_CONFIG-} }
+add-zsh-hook precmd _prompt_drawn
+# On resize, redraw the prompt already on screen with the right config.
+# When a pane gets narrower than that prompt, the terminal re-wraps it onto
+# more rows, but zsh does not know and would redraw it lower. So measure the
+# old prompt's first line, move up over the rows the wrap added, then redraw
+# with the builtin .reset-prompt so no plugin's wrapped version runs.
+TRAPWINCH() {
+  _starship_width
+  zle || return 0
+  local out line w extra=0
+  if (( COLUMNS < ${_prompt_cols:-0} )); then
+    out=$(
+      if [[ -n $_prompt_cfg ]]; then export STARSHIP_CONFIG=$_prompt_cfg; else unset STARSHIP_CONFIG; fi
+      starship prompt --terminal-width=$_prompt_cols
+    )
+    for line in "${(@f)out}"; do [[ -n $line ]] && break; done
+    line=${(S)line//\%\{*\%\}/}
+    w=${(m)#line}
+    (( w > 0 )) && extra=$(( (w - 1) / COLUMNS ))
+    (( extra > 0 )) && print -n -- $'\e['"${extra}A"
+  fi
+  zle .reset-prompt
+  zle -R
+  _prompt_drawn
+}
 
 # FZF
-source <(fzf --zsh)
+cached_init fzf fzf --zsh
 bindkey '^T' fzf-file-widget
 
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
@@ -192,22 +250,19 @@ _fzf_comprun() {
 # =====================================================
 # 10. HISTORY / SEARCH (ATUIN)
 # =====================================================
-eval "$(atuin init zsh)"
+cached_init atuin atuin init zsh
 
 bindkey -M viins '^r' atuin-search
 bindkey -M vicmd '/' atuin-search
 
 
 # =====================================================
-# 11. BAT, EZA, THEFUCK
+# 11. BAT, EZA
 # =====================================================
 
 export BAT_THEME=tokyonight
 
 alias ls="eza --icons=always --oneline"
-
-eval "$(thefuck --alias fk)"
-
 
 # =====================================================
 # 12. ALIASES
@@ -334,7 +389,7 @@ export HERD_PHP_84_INI_SCAN_DIR="/Users/rashed/Library/Application Support/Herd/
 export PATH="$PATH:/Users/rashed/.lmstudio/bin"
 # End of LM Studio CLI section
 
-eval "$(tv init zsh)"
+cached_init tv tv init zsh
 
 # kp [port] — kill whatever listens on a port (default 3000). Handy in tmux.
 kp() {
