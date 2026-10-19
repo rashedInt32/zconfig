@@ -45,12 +45,28 @@ cached_init() {
 export TERM="xterm-256color"
 [ -n "$TMUX" ] && export TERM="tmux-256color"
 
-if command -v tmux >/dev/null 2>&1; then
-  # NO_AUTO_TMUX=1 opts out of auto-attach (e.g. to run herdr in a bare shell)
-  if [ -z "$TMUX" ] && [ -z "$NO_AUTO_TMUX" ] && [ -t 0 ] && [ -t 1 ]; then
-    if [ "$TERM_PROGRAM" = "Ghostty" ] || [ -n "$GHOSTTY" ] || [[ "$TERM" == *"xterm"* ]]; then
-      tmux attach-session -t main || tmux new-session -s main
-      exit
+# tmux auto-attach DISABLED 2026-10-19 for the sluice trial. Restore: uncomment the
+# block below (or copy it back from .zshrc.2026-10-19.bak). Start a session with: sluice main
+# if command -v tmux >/dev/null 2>&1; then
+#   # NO_AUTO_TMUX=1 opts out of auto-attach (e.g. to run herdr in a bare shell).
+#   # HERDR_ENV=1 is set inside herdr panes: never nest tmux there, herdr would
+#   # see `tmux` as the pane process and lose agent detection (herdr docs).
+#   if [ -z "$TMUX" ] && [ -z "$NO_AUTO_TMUX" ] && [ "${HERDR_ENV:-}" != 1 ] && [ -t 0 ] && [ -t 1 ]; then
+#     if [ "$TERM_PROGRAM" = "Ghostty" ] || [ -n "$GHOSTTY" ] || [[ "$TERM" == *"xterm"* ]]; then
+#       tmux attach-session -t main || tmux new-session -s main
+#       exit
+#     fi
+#   fi
+# fi
+
+# sluice auto-attach (2026-10-19): the tmux replacement. No name = session picker;
+# Esc there = project picker; Esc again = plain shell. A clean exit (detach, shell
+# exit) closes the window like tmux did; errors and cancels stay in the shell.
+# NO_AUTO_SLUICE=1 opts out. Never inside tmux, zmx or herdr panes.
+if command -v sluice >/dev/null 2>&1; then
+  if [ -z "$ZMX_SESSION" ] && [ -z "$TMUX" ] && [ -z "$NO_AUTO_SLUICE" ] && [ "${HERDR_ENV:-}" != 1 ] && [ -t 0 ] && [ -t 1 ]; then
+    if [ "$TERM_PROGRAM" = "ghostty" ] || [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
+      sluice && exit
     fi
   fi
 fi
@@ -207,6 +223,32 @@ TRAPWINCH() {
   zle -R
   _prompt_drawn
 }
+
+# sluice window mark: exports SLUICE_WINDOWS="2/3" while this shell's session
+# has more than one window, for the Starship env_var module to show. Pure zsh:
+# one glob over zmx's socket directory, which holds one socket per live window,
+# so the prompt costs no extra process.
+_sluice_windows_mark() {
+  unset SLUICE_WINDOWS
+  [[ -n $ZMX_SESSION ]] || return 0
+  # Same resolution order as zmx itself (src/cfg.zig).
+  local dir=${ZMX_DIR:-${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/zmx}}
+  [[ -n $dir ]] || dir=${${TMPDIR:-/tmp}%/}/zmx-$UID
+  local group=$ZMX_SESSION cur=1
+  if [[ $ZMX_SESSION == ?*+<-> ]]; then
+    group=${ZMX_SESSION%+*}
+    cur=${ZMX_SESSION##*+}
+  fi
+  local -a ks socks
+  [[ -S $dir/$group ]] && ks+=(1)
+  socks=( $dir/${(b)group}+<->(N=) )
+  local s
+  for s in $socks; do ks+=(${s##*+}); done
+  (( ${#ks} > 1 )) || return 0
+  ks=(${(on)ks})
+  export SLUICE_WINDOWS="${ks[(Ie)$cur]}/${#ks}"
+}
+add-zsh-hook precmd _sluice_windows_mark
 
 # FZF
 cached_init fzf fzf --zsh
